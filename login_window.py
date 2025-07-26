@@ -1,7 +1,8 @@
 import tkinter as tk
 from tkinter import messagebox
 from logic.auth import check_login
-
+import json
+import datetime
 
 def create_login_window():
     """Create a simple login window using Tkinter."""
@@ -13,13 +14,13 @@ def create_login_window():
         username = entry_username.get()
         password = entry_password.get()
         if check_login(username, password):
-            messagebox.showinfo("ورود موفق", "!خوش آمدید")
+            messagebox.showinfo("ورود موفق", "!عزیز خوش آمدید"+ username)
             root.destroy()  # Close window (or go to next panel)
         else:
             messagebox.showerror("خطا", "نام کاربری یا رمز عبور اشتباه است")
 
 
-    # Create main window and set window size.
+    # Create the main window and set window size.
     root = tk.Tk()
     root.title("ورود به سیستم")
     root.geometry("350x200")
