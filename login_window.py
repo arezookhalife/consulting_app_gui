@@ -15,6 +15,8 @@ def create_login_window():
         password = entry_password.get()
         if check_login(username, password):
             messagebox.showinfo("ورود موفق", "!عزیز خوش آمدید"+ username)
+            with open("log.txt", "a") as f:
+                f.write("\n"+str(datetime.datetime.today()) + " | " + username)  # Record successful login to log.txt.
             root.destroy()  # Close window (or go to next panel)
         else:
             messagebox.showerror("خطا", "نام کاربری یا رمز عبور اشتباه است")
