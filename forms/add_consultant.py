@@ -48,3 +48,6 @@ def add_consultant_form():
 
     # Submit button to trigger validation and saving.
     tk.Button(window, text="ذخیره مشاور", command=submit).pack(pady=20)
+
+    # Cancel button to abort validation and data saving.
+    tk.Button(window, text="لغو", command=window.destroy).pack()
