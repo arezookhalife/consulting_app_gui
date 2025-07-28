@@ -27,3 +27,16 @@ def save_consultant(name, specialty, phone, email, time):
             data.append(consultant)
             f.seek(0)
             json.dump(data, f, indent=4)
+
+
+def consultants_count():
+    """Returns the number of consultants in the JSON file."""
+    
+    if not os.path.exists(file_path):
+        count=0
+               
+    else:
+        with open(file_path, "r+") as f:
+            data = json.load(f)
+            count= len(data)
+    return count
