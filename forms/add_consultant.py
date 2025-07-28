@@ -30,6 +30,11 @@ def add_consultant_form():
         if not all([name, specialty, phone, email]):
             messagebox.showerror("خطا", "لطفاً تمام فیلدها را پر کنید")
             return 
+        
+       # Validate phone number (digits only).
+        if not phone.isdigit():
+            messagebox.showerror("خطا", "شماره تماس معتبر وارد کنید")
+            return 
 
         # Simple email format validation.
         if "@" not in email or "." not in email:
