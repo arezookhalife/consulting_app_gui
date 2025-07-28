@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from logic.consultants import save_consultant
-
+from datetime import datetime
 def add_consultant_form():
     """Create a form window to add a new consultant with input validation."""
     
@@ -25,6 +25,8 @@ def add_consultant_form():
         """Validate input fields and save consultant if all data is valid."""
         
         name, specialty, phone, email = [e.get().strip() for e in entries]
+        time= str(datetime.today())
+        
         
         # Ensure all fields are filled.                
         if not all([name, specialty, phone, email]):
@@ -42,7 +44,7 @@ def add_consultant_form():
             return 
 
         # Save consultant data.
-        save_consultant(name, specialty, phone, email)
+        save_consultant(name, specialty, phone, email, time)
         messagebox.showinfo("موفق", "مشاور با موفقیت ذخیره شد")
         window.destroy()
 
