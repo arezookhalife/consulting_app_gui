@@ -40,3 +40,22 @@ def consultants_count():
             data = json.load(f)
             count= len(data)
     return count
+
+
+def search_consultant_by_name(name):
+    """This function searches consultant by name."""
+
+    # If the file doesn't exist, create it with the consultant as the first entry.
+    if not os.path.exists(file_path):
+        return
+            
+    # If a file exists, read current data, add new consultant, and overwrite the file.   
+    else:
+        with open(file_path, "r") as f:
+            list = json.load(f)
+            
+        # Find matched names.
+        matched_names = [c["name"] for c in list if name.lower() in c["name"].lower()]
+        consultants = [a for a in list if a["name"] in matched_names]
+        return consultants      
+            

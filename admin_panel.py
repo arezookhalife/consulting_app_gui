@@ -1,6 +1,6 @@
 import tkinter as tk
 from forms.add_consultant import add_consultant_form
-from forms.view_appointments import view_appointments
+from forms.view_consultants import view_consultants
 
 
 def open_admin_panel():
@@ -12,7 +12,7 @@ def open_admin_panel():
     tk.Label(admin, text="به پنل مدیریت خوش آمدید", font=("Arial", 14)).pack(pady=20)
 
     tk.Button(admin, text="افزودن مشاور", width=20, command=add_consultant_form).pack(pady=10)
-    tk.Button(admin, text="مشاهده نوبت‌ها", width=20, command=view_appointments).pack(pady=10)
+    tk.Button(admin, text="مشاهده لیست مشاوران", width=20, command=view_consultants).pack(pady=10)
     tk.Button(admin, text="خروج", width=20, command=admin.destroy).pack(pady=10)
 
     admin.mainloop()
