@@ -1,9 +1,12 @@
 import tkinter as tk
 import json
 from logic.consultants import search_consultant_by_name
+from logic.appointments import appointments_count
+
 
 def view_consultants():
     """Open a window to display a list of consultants from a JSON file and search consultants by name."""
+    appointments_count()
 
     try:
         with open("data/consultants.json", "r") as file:
@@ -32,9 +35,9 @@ def view_consultants():
         if not results:
             tk.Label(result_frame, text="هیچ مشاوری یافت نشد.").pack()
         else:
-            tk.Label(result_frame, text="نام مشاور | تخصص | شماره تماس").pack()
+            tk.Label(result_frame, text="نام مشاور | تخصص | شماره تماس| تعداد نوبت ها").pack()
             for c in results:
-                info = f"{c['name']} | {c['specialty']} | {c['phone']}"
+                info = f"{c['name']} | {c['specialty']} | {c['phone']} | {c['appointments_count']}"
                 tk.Label(result_frame, text=info).pack(pady=2)
     
     

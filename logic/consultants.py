@@ -5,14 +5,16 @@ file_path = "data/consultants.json"
 
 def save_consultant(name, specialty, phone, email, time):
     """Save a consultant's info to a JSON file."""
-    
+      
     # Create a dictionary for the consultant.
     consultant = {
+        "id":"",
         "name": name,
         "specialty": specialty,
         "phone": phone,
         "email": email,
-        "time_submit": time
+        "time_submit": time,
+        "appointments_count":0
     }
 
     # If the file doesn't exist, create it with the consultant as the first entry.
@@ -24,6 +26,8 @@ def save_consultant(name, specialty, phone, email, time):
     else:
         with open(file_path, "r+") as f:
             data = json.load(f)
+            new_id= data[-1]["id"]+ 1 if data else 1
+            consultant["id"]=new_id
             data.append(consultant)
             f.seek(0)
             json.dump(data, f, indent=4)
