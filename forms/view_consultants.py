@@ -2,7 +2,7 @@ import tkinter as tk
 import json
 from logic.consultants import search_consultant_by_name
 from logic.appointments import appointments_count
-
+from forms.edit_consultant import edit_consultant_form, delete_consultants
 
 def view_consultants():
     """Open a window to display a list of consultants from a JSON file and search consultants by name."""
@@ -39,7 +39,9 @@ def view_consultants():
             for c in results:
                 info = f"{c['name']} | {c['specialty']} | {c['phone']} | {c['appointments_count']}"
                 tk.Label(result_frame, text=info).pack(pady=2)
-    
+                tk.Button(result_frame,text="ویرایش",command= lambda id= c['id']:edit_consultant_form(id)).pack()
+                tk.Button(result_frame,text="حذف",command= lambda id= c['id']: delete_consultants(id)).pack()
+                
     
     def on_search():  
         
