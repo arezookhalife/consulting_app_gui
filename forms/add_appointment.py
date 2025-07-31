@@ -4,25 +4,28 @@ import json
 
 def add_appointment():
     def save_appointment():
-        consultant_name = consultant_var.get()
+        consultant_id = consultant_var.get()
         date = entry_date.get()
         time = entry_time.get()
 
-        if not consultant_name or not date or not time:
+        if not consultant_id or not date or not time:
             messagebox.showerror("خطا", "تمام فیلدها باید پر شوند!")
             return
-
-        new_appointment = {
-            "consultant": consultant_name,
-            "date": date,
-            "time": time
-        }
-
+        
         try:
             with open("data/appointments.json", "r") as file:
                 appointments = json.load(file)
         except FileNotFoundError:
             appointments = []
+            
+            
+        new_id= appointments[-1]["id"]+ 1 if appointments else 1
+        new_appointment = {
+            "id": new_id,
+            "consultant_id": int(consultant_id),
+            "date": date,
+            "time": time
+        }
 
         appointments.append(new_appointment)
 
@@ -43,10 +46,10 @@ def add_appointment():
     except FileNotFoundError:
         consultants = []
 
-    consultant_var = tk.StringVar()
+    consultant_var = tk.StringVar(root)
 
     for consultant in consultants:
-        tk.Radiobutton(root, text=consultant['name'], value=consultant['name'], variable=consultant_var).pack()
+        tk.Radiobutton(root, text=consultant['name'], value=consultant['id'], variable=consultant_var).pack()
 
     tk.Label(root, text="تاریخ نوبت:").pack(pady=5)
     entry_date = tk.Entry(root)
@@ -57,6 +60,6 @@ def add_appointment():
     entry_time.pack(pady=5)
 
     tk.Button(root, text="ذخیره نوبت", command=save_appointment).pack(pady=20)
-    tk.Button(root, text="بازگشت", command=root.quit).pack()
+    tk.Button(root, text="بازگشت", command=root.destroy).pack()
 
     root.mainloop()
