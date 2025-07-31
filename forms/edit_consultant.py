@@ -28,7 +28,7 @@ def edit_consultant_form(id):
     if not consultants:
         messagebox.showerror("خطا", "مشاوری برای ویرایش وجود ندارد.")
             
-    # If a file exists, read current data, add new consultant, and overwrite the file.   
+    # If a file exists, read current data, edit consultant, and overwrite the file.   
     else:
         # Find matched consultant.
         consultant =  next((a for a in consultants if a["id"] == id), None)
@@ -107,7 +107,7 @@ def delete_consultants(id):
     if not consultants:
         messagebox.showerror("خطا", "مشاوری برای حذف وجود ندارد.")
             
-    # If a file exists, read current data, add new consultant, and overwrite the file.   
+    # If a file exists, read current data.   
     else:
         # Find matched consultant.
         consultant =  next((a for a in consultants if a["id"] == id), None)
