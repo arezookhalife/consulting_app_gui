@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import messagebox
-from logic.consultants import save_consultant
 from datetime import datetime
 import json
 
@@ -65,7 +64,7 @@ def edit_consultant_form(id):
                     messagebox.showerror("خطا", "لطفاً تمام فیلدها را پر کنید")
                     return 
                 
-            # Validate phone number (digits only).
+                # Validate phone number (digits only).
                 if not phone.isdigit():
                     messagebox.showerror("خطا", "شماره تماس معتبر وارد کنید")
                     return 
@@ -86,7 +85,7 @@ def edit_consultant_form(id):
                     "appointments_count":consultant['appointments_count']
                 }
                 consultants.remove(consultant)
-                consultants.append(new_consultant)
+                consultants.insert((id-1),new_consultant)
                 save_file(consultants,CONSULTANTS_FILE)
                 messagebox.showinfo("موفق", "مشاور با موفقیت ویرایش شد")
                 window.destroy()
