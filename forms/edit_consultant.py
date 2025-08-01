@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import messagebox
-from logic.consultants import save_consultant
 from datetime import datetime
 import json
 
@@ -28,7 +27,7 @@ def edit_consultant_form(id):
     if not consultants:
         messagebox.showerror("خطا", "مشاوری برای ویرایش وجود ندارد.")
             
-    # If a file exists, read current data, add new consultant, and overwrite the file.   
+    # If a file exists, read current data, edit consultant, and overwrite the file.   
     else:
         # Find matched consultant.
         consultant =  next((a for a in consultants if a["id"] == id), None)
@@ -65,7 +64,7 @@ def edit_consultant_form(id):
                     messagebox.showerror("خطا", "لطفاً تمام فیلدها را پر کنید")
                     return 
                 
-            # Validate phone number (digits only).
+                # Validate phone number (digits only).
                 if not phone.isdigit():
                     messagebox.showerror("خطا", "شماره تماس معتبر وارد کنید")
                     return 
@@ -86,7 +85,7 @@ def edit_consultant_form(id):
                     "appointments_count":consultant['appointments_count']
                 }
                 consultants.remove(consultant)
-                consultants.append(new_consultant)
+                consultants.insert((id-1),new_consultant)
                 save_file(consultants,CONSULTANTS_FILE)
                 messagebox.showinfo("موفق", "مشاور با موفقیت ویرایش شد")
                 window.destroy()
@@ -107,7 +106,7 @@ def delete_consultants(id):
     if not consultants:
         messagebox.showerror("خطا", "مشاوری برای حذف وجود ندارد.")
             
-    # If a file exists, read current data, add new consultant, and overwrite the file.   
+    # If a file exists, read current data.   
     else:
         # Find matched consultant.
         consultant =  next((a for a in consultants if a["id"] == id), None)
