@@ -49,8 +49,9 @@ def add_appointment():
     root = tk.Tk()
     root.title("ثبت نوبت")
     root.geometry("400x300")
+    root.config(bg="lightblue")
 
-    tk.Label(root, text="انتخاب مشاور:").pack(pady=5)
+    tk.Label(root, text="انتخاب مشاور:", bg="lightblue").pack(pady=5)
 
     try:
         with open("data/consultants.json", "r") as file:
@@ -61,17 +62,17 @@ def add_appointment():
     consultant_var = tk.StringVar(root)
 
     for consultant in consultants:
-        tk.Radiobutton(root, text=consultant['name'], value=consultant['id'], variable=consultant_var).pack()
+        tk.Radiobutton(root, text=consultant['name'], value=consultant['id'], variable=consultant_var, bg="lightblue").pack()
 
-    tk.Label(root, text="تاریخ نوبت:").pack(pady=5)
+    tk.Label(root, text="تاریخ نوبت:", bg="lightblue").pack(pady=5)
     entry_date = tk.Entry(root)
     entry_date.pack(pady=5)
 
-    tk.Label(root, text="ساعت نوبت:").pack(pady=5)
+    tk.Label(root, text="ساعت نوبت:", bg="lightblue").pack(pady=5)
     entry_time = tk.Entry(root)
     entry_time.pack(pady=5)
 
-    tk.Button(root, text="ذخیره نوبت", command=save_appointment).pack(pady=20)
-    tk.Button(root, text="بازگشت", command=root.destroy).pack()
+    tk.Button(root, text="ذخیره نوبت", command=save_appointment, bg="green", fg="white").pack(pady=20)
+    tk.Button(root, text="بازگشت", command=root.destroy, bg="red", fg="white").pack()
 
     root.mainloop()
