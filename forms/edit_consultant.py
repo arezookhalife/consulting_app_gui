@@ -38,6 +38,7 @@ def edit_consultant_form(id):
             window = tk.Toplevel()
             window.title("ویرایش مشاور ")
             window.geometry("400x400")
+            window.config(bg="lightblue")
 
             # Field a labels &  # list of entry widgets.
             labels = ["نام مشاور", "تخصص", "شماره تماس", "ایمیل"]
@@ -45,10 +46,12 @@ def edit_consultant_form(id):
             new_entries =[]
             
             # Create label and entry for each field.
+            y=10
             for label_text in labels:
-                tk.Label(window, text=label_text).pack(pady=5)
+                y=y+40
+                tk.Label(window, text=label_text,bg="lightblue").place(x=250,y=y)
                 entry = tk.Entry(window)
-                entry.pack()
+                entry.place(x=100,y=y)
                 entry.insert(0, entries[labels.index(label_text)])  
                 new_entries.append(entry)
                 
@@ -91,10 +94,10 @@ def edit_consultant_form(id):
                 window.destroy()
 
             # Edit button to trigger validation and saving.
-            tk.Button(window, text="ویرایش مشاور", command=submit).pack(pady=20)
+            tk.Button(window, text="ویرایش مشاور", command=submit, bg="green", fg="white").place(x=200,y=220)
 
             # Cancel button to abort validation and data saving.
-            tk.Button(window, text="لغو", command=window.destroy).pack()
+            tk.Button(window, text="لغو", command=window.destroy, bg="red", fg="white").place(x=150,y=220)
             
 
 def delete_consultants(id):

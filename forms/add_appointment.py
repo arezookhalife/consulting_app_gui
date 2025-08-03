@@ -1,11 +1,13 @@
 import tkinter as tk
+from tkinter import ttk
 from tkinter import messagebox
 from datetime import datetime
 import json
 
 def add_appointment():
     def save_appointment():
-        consultant_id = consultant_var.get()
+        name = consultant_var.get().strip()
+        consultant_id = consultant_name_to_id.get(name)
         date_input = entry_date.get()
         time_input = entry_time.get()
 
@@ -46,12 +48,12 @@ def add_appointment():
                 messagebox.showerror("خطا", "فرمت تاریخ یا ساعت وارد شده صحیح نیست!")
                 
             
-    root = tk.Tk()
+    root = tk.Toplevel()
     root.title("ثبت نوبت")
     root.geometry("400x300")
     root.config(bg="lightblue")
-
-    tk.Label(root, text="انتخاب مشاور:", bg="lightblue").pack(pady=5)
+    
+    tk.Label(root, text="انتخاب مشاور", bg="lightblue").place(x=250,y=50)
 
     try:
         with open("data/consultants.json", "r") as file:
@@ -59,20 +61,21 @@ def add_appointment():
     except FileNotFoundError:
         consultants = []
 
+    consultant_names = [c['name'] for c in consultants]
+    consultant_name_to_id = {c['name']: c['id'] for c in consultants}
     consultant_var = tk.StringVar(root)
 
-    for consultant in consultants:
-        tk.Radiobutton(root, text=consultant['name'], value=consultant['id'], variable=consultant_var, bg="lightblue").pack()
+    ttk.Combobox(root, values=consultant_names, textvariable=consultant_var, state="readonly").place(x=100,y=50)
 
-    tk.Label(root, text="تاریخ نوبت:", bg="lightblue").pack(pady=5)
+    tk.Label(root, text="تاریخ نوبت", bg="lightblue").place(x=250,y=90)
     entry_date = tk.Entry(root)
-    entry_date.pack(pady=5)
+    entry_date.place(x=100,y=90)
 
-    tk.Label(root, text="ساعت نوبت:", bg="lightblue").pack(pady=5)
+    tk.Label(root, text="ساعت نوبت", bg="lightblue").place(x=250,y=130)
     entry_time = tk.Entry(root)
-    entry_time.pack(pady=5)
+    entry_time.place(x=100,y=130)
 
-    tk.Button(root, text="ذخیره نوبت", command=save_appointment, bg="green", fg="white").pack(pady=20)
-    tk.Button(root, text="بازگشت", command=root.destroy, bg="red", fg="white").pack()
+    tk.Button(root, text="ذخیره نوبت", command=save_appointment, bg="green", fg="white").place(x=200,y=170)
+    tk.Button(root, text="بازگشت", command=root.destroy, bg="red", fg="white").place(x=150,y=170)
 
     root.mainloop()

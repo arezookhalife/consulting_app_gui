@@ -41,29 +41,30 @@ def edit_appointment_form(id):
         if result:
             # Create a new top-level window.
             window = tk.Toplevel()
-            window.title("ویرایش نوبت ")
+            window.title("ویرایش نوبت")
             window.geometry("400x400")
+            window.config(bg="lightblue")
             
             consultant_names = [c['name'] for c in consultants]
             consultant_id_to_name = {c['id']: c['name'] for c in consultants}
             consultant_name_to_id = {c['name']: c['id'] for c in consultants}
 
             # Field a labels &  # list of entry widgets.
-            tk.Label(window, text="نام مشاور:").pack(pady=5)
+            tk.Label(window, text="نام مشاور:", bg="lightblue").place(x=250,y=50)
             consultant_var = tk.StringVar()
             consultant_dropdown = ttk.Combobox(window, textvariable=consultant_var, values=consultant_names, state="readonly")
             consultant_dropdown.set(consultant_id_to_name.get(appointment["consultant_id"], ""))
-            consultant_dropdown.pack()
+            consultant_dropdown.place(x=100,y=50)
             
-            tk.Label(window, text="تاریخ نوبت:").pack(pady=5)
+            tk.Label(window, text="تاریخ نوبت:", bg="lightblue").place(x=250,y=90)
             entry_date = tk.Entry(window)
             entry_date.insert(0, appointment["date"])
-            entry_date.pack()
+            entry_date.place(x=100,y=90)
 
-            tk.Label(window, text="ساعت نوبت:").pack(pady=5)
+            tk.Label(window, text="ساعت نوبت:", bg="lightblue").place(x=250,y=130)
             entry_time = tk.Entry(window)
             entry_time.insert(0, appointment["time"])
-            entry_time.pack()
+            entry_time.place(x=100,y=130)
             
             
                
@@ -106,10 +107,10 @@ def edit_appointment_form(id):
 
 
             # Edit button to trigger validation and saving.
-            tk.Button(window, text="ویرایش نوبت", command=submit).pack(pady=20)
+            tk.Button(window, text="ویرایش نوبت", command=submit, bg="green", fg="white").place(x=200,y=170)
 
             # Cancel button to abort validation and data saving.
-            tk.Button(window, text="لغو", command=window.destroy).pack()
+            tk.Button(window, text="لغو", command=window.destroy, bg="red", fg="white").place(x=150,y=170)
             
 
 def delete_appointments(id):

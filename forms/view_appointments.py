@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 import json
 from logic.appointments import search_appointment_by_consultant, search_appointments_by_date
 from forms.edit_appointments import edit_appointment_form, delete_appointments
@@ -26,37 +27,21 @@ def view_appointments():
     # Create main window.
     root = tk.Tk()
     root.title("مشاهده نوبت ها")
-    root.geometry("600x400")
-       
-    tk.Label(root, text="لیست نوبت‌ها", font=("Arial", 14)).pack(pady=20)
-    tk.Label(root, text="جستجوی نوبت ").pack(pady=5)
-    tk.Label(root, text="بر اساس نام مشاور").pack(pady=5)
+    root.geometry("600x450")
+    root.resizable(True, True)
+    root.config(bg="lightblue")  
+     
+    tk.Label(root, text="لیست نوبت‌ها",  font=("Arial", 12,"bold"),bg="lightblue").pack(pady=20)
+    tk.Label(root, text="جستجوی نوبت ",bg="lightblue").place(x=450,y=70)
+    tk.Label(root, text="نام مشاور",bg="lightblue").place(x=370,y=60)
     consultant_entry = tk.Entry(root)
-    consultant_entry.pack(pady=5)
+    consultant_entry.place(x=240,y=60)
    
-    tk.Label(root, text="بر اساس تاریخ نوبت").pack(pady=5)
+    tk.Label(root, text="تاریخ نوبت",bg="lightblue").place(x=370,y=80)
     date_entry = tk.Entry(root)
-    date_entry.pack(pady=5)
+    date_entry.place(x=240,y=80)
     
     consultant_map={c['id']:c['name'] for c in consultants}
-
-    def display_results(results):
-           
-        # Clear previous results
-        for widget in result_frame.winfo_children():
-            widget.destroy()
-
-        if not results:
-            tk.Label(result_frame, text="هیچ نوبتی یافت نشد.").pack()
-        else:
-            tk.Label(result_frame, text="نام مشاور |تاریخ مشاوره| ساعت مشاوره").pack()
-            for a in results:
-                name = consultant_map.get(int(a['consultant_id']),"مشاور ناشناس")
-                info = f"{name} | {a['date']} | {a['time']}"
-                tk.Label(result_frame, text=info).pack(pady=2)
-                tk.Button(result_frame,text="ویرایش",command= lambda id= a['id']:edit_appointment_form(id)).pack()
-                tk.Button(result_frame,text="حذف",command= lambda id= a['id']: delete_appointments(id)).pack()
-
 
     def on_search():  
        
@@ -69,17 +54,87 @@ def view_appointments():
         else:
             results= appointments
         display_results(results)
-   
-   
-    tk.Button(root, text="جستجو", command=on_search).pack(pady=5)
-
+        
+    tk.Button(root, text="جستجو", command=on_search,bg="blue", fg="white").place(x=170,y=70)
+    
     result_frame = tk.Frame(root)
-    result_frame.pack(pady=10)
+    result_frame.pack(pady=40)
+    
+    style = ttk.Style()
+    style.theme_use("clam")
+    style.configure("Treeview.Heading", background="lightblue", foreground="black", font=("Arial", 12, "bold"))
+    
+    columns = ("id","ساعت مشاوره ","تاریخ مشاوره",  "نام مشاور" )
+    vsb = ttk.Scrollbar(result_frame, orient="vertical")
+    hsb = ttk.Scrollbar(result_frame, orient="horizontal")
+   
+    tree = ttk.Treeview(result_frame, columns=columns, show="headings", height=10)            
+    
+    vsb.config(command=tree.yview)
+    hsb.config(command=tree.xview)
+    
+    vsb.pack(side="right", fill="y")
+    hsb.pack(side="bottom", fill="x")
+    tree.pack(side="left", fill="both", expand=True)
+    
+   
+    for c in columns:
+        tree.heading(c, text=c, anchor="e")
+        tree.column(c, anchor="e")
+
+    tree.column("id", width=0, stretch=False)
+    tree.pack(expand=True, fill="both")   
+    tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)    
+
+    button_frame = tk.Frame(root,bg="lightblue")
+    button_frame.place(x=270,y=400)
+    selected_appointment_id = tk.StringVar(root)
+    
+    def on_row_selected(event):
+        selected = tree.selection()
+        if selected:
+            selected_id = tree.item(selected[0])["values"][0]
+            selected_id = selected_id
+            selected_appointment_id.set(selected_id)
+            edit_button.config(state="normal")
+            delete_button.config(state="normal")
+        else:
+            selected_appointment_id.set("")
+            edit_button.config(state="disabled")
+            delete_button.config(state="disabled")
+    
+    edit_button = tk.Button(button_frame, text="ویرایش",bg="purple",fg="white",state="disabled", command=lambda : edit_appointment_form(int(selected_appointment_id.get())))
+    edit_button.pack(side="right", padx=10)
+
+
+    delete_button = tk.Button(button_frame, text="حذف",bg="orange",fg="white",state="disabled", command=lambda : delete_appointments(int(selected_appointment_id.get())))
+    delete_button.pack(side="right", padx=10)
+    
+    status_label = tk.Label(root, text="",bg="lightblue" ,fg="red", font=("Arial", 10))
+    status_label.place(x=250,y=350)
+    
+    def display_results(results):
+        
+        tree.delete(*tree.get_children())
+        
+
+        if not results:
+            status_label.config(text="هیچ نوبتی یافت نشد")
+
+        else:
+            status_label.config(text="")
+            for a in results:
+                name=consultant_map.get(int(a['consultant_id']),"مشاور ناشناس")
+                tree.insert("", tk.END, values=(a["id"],a["time"],a["date"],name))
+
+
    
     display_results(appointments)
+    
+    tree.bind("<<TreeviewSelect>>", on_row_selected)
    
     # Back button to close the window
-    tk.Button(root, text="بازگشت", command= root.destroy).pack(pady=20)
+    tk.Button(root, text="بازگشت", command= root.destroy,bg="red",fg="white").place(x=220,y=400)
    
     root.mainloop()
 
