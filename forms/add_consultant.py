@@ -8,17 +8,20 @@ def add_consultant_form():
     # Create a new top-level window.
     window = tk.Toplevel()
     window.title("افزودن مشاور جدید")
-    window.geometry("400x400")
-
+    window.geometry("400x300")
+    window.config(bg="lightblue")
+    
     # Field a labels &  # list of entry widgets.
     labels = ["نام مشاور", "تخصص", "شماره تماس", "ایمیل"]
     entries = []
 
     # Create label and entry for each field.
+    y=10
     for label_text in labels:
-        tk.Label(window, text=label_text).pack(pady=5)
+        y=y+40
+        tk.Label(window, text=label_text, bg="lightblue").place(x=250,y=y)
         entry = tk.Entry(window)
-        entry.pack()
+        entry.place(x=100,y=y)
         entries.append(entry)
 
     def submit():
@@ -49,7 +52,7 @@ def add_consultant_form():
         window.destroy()
 
     # Submit button to trigger validation and saving.
-    tk.Button(window, text="ذخیره مشاور", command=submit).pack(pady=20)
+    tk.Button(window, text="ذخیره مشاور", command=submit, bg="green", fg="white").place(x=200,y=220)
 
     # Cancel button to abort validation and data saving.
-    tk.Button(window, text="لغو", command=window.destroy).pack()
+    tk.Button(window, text="لغو", command=window.destroy, bg="red", fg="white").place(x=150,y=220)
