@@ -1,7 +1,12 @@
 import tkinter as tk
 from tkinter import messagebox
-from logic.consultants import save_consultant
 from datetime import datetime
+from logic.utils import save_file, load_file
+
+# File path for data storage.
+CONSULTANTS_FILE= "data/consultants.json"
+    
+        
 def add_consultant_form():
     """Create a form window to add a new consultant with input validation."""
     
@@ -11,7 +16,7 @@ def add_consultant_form():
     window.geometry("400x300")
     window.config(bg="lightblue")
     
-    # Field a labels &  # list of entry widgets.
+    # Field a labels and list of entry widgets.
     labels = ["نام مشاور", "تخصص", "شماره تماس", "ایمیل"]
     entries = []
 
@@ -24,12 +29,11 @@ def add_consultant_form():
         entry.place(x=100,y=y)
         entries.append(entry)
 
+
     def submit():
         """Validate input fields and save consultant if all data is valid."""
-        
         name, specialty, phone, email = [e.get().strip() for e in entries]
         time= str(datetime.today())
-        
         
         # Ensure all fields are filled.                
         if not all([name, specialty, phone, email]):
@@ -46,10 +50,26 @@ def add_consultant_form():
             messagebox.showerror("خطا", "ایمیل معتبر وارد کنید")
             return 
 
+        # Generate a new unique ID.
+        consultants=load_file(CONSULTANTS_FILE)
+
+        new_id= consultants[-1]["id"]+ 1 if consultants else 1
+        new_consultant = {
+        "id":new_id,
+        "name": name,
+        "specialty": specialty,
+        "phone": phone,
+        "email": email,
+        "time_submit": time,
+        "appointments_count":0
+        }
+        
         # Save consultant data.
-        save_consultant(name, specialty, phone, email, time)
+        consultants.append(new_consultant)
+        save_file(consultants,CONSULTANTS_FILE)
         messagebox.showinfo("موفق", "مشاور با موفقیت ذخیره شد")
         window.destroy()
+
 
     # Submit button to trigger validation and saving.
     tk.Button(window, text="ذخیره مشاور", command=submit, bg="green", fg="white").place(x=200,y=220)

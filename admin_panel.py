@@ -4,8 +4,10 @@ from forms.view_consultants import view_consultants
 from forms.add_appointment import add_appointment
 from forms.view_appointments import view_appointments
 
+
 def open_admin_panel():
     """View admin panel when user login as admin."""
+    
     admin = tk.Tk()
     admin.title("پنل ادمین")
     admin.geometry("400x300")

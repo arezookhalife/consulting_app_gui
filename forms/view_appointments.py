@@ -1,26 +1,18 @@
 import tkinter as tk
 from tkinter import ttk
-import json
 from logic.appointments import search_appointment_by_consultant, search_appointments_by_date
 from forms.edit_appointments import edit_appointment_form, delete_appointments
+from logic.utils import load_file
+
 
 APPOINTMENTS_FILE= "data/appointments.json"
 CONSULTANTS_FILE= "data/consultants.json"
 
-def load_file(file):
-    """This function import/create list."""
-
-    try:
-        with open(file, "r", encoding= "utf-8") as g:
-            return json.load(g)
-    except FileNotFoundError:
-        return []
-
  
 def view_appointments():
-    """Open a window to display a list of appointments from a JSON file ."""
+    """Open a window to display and manage a list of appointments."""
    
-    # Import consultants and appointments list.
+    # Load consultants and appointments data from JSON files.
     appointments = load_file(APPOINTMENTS_FILE)
     consultants = load_file(CONSULTANTS_FILE)
        
@@ -43,8 +35,10 @@ def view_appointments():
     
     consultant_map={c['id']:c['name'] for c in consultants}
 
+    
     def on_search():  
-       
+        """Filter appointments based on consultant name or date."""
+        
         consultant_input = consultant_entry.get().strip()
         date_input = date_entry.get().strip()
         if consultant_input:
@@ -54,6 +48,7 @@ def view_appointments():
         else:
             results= appointments
         display_results(results)
+       
         
     tk.Button(root, text="جستجو", command=on_search,bg="blue", fg="white").place(x=170,y=70)
     
@@ -77,7 +72,6 @@ def view_appointments():
     hsb.pack(side="bottom", fill="x")
     tree.pack(side="left", fill="both", expand=True)
     
-   
     for c in columns:
         tree.heading(c, text=c, anchor="e")
         tree.column(c, anchor="e")
@@ -90,7 +84,10 @@ def view_appointments():
     button_frame.place(x=270,y=400)
     selected_appointment_id = tk.StringVar(root)
     
+    
     def on_row_selected(event):
+        """Handle selection of an appointment from the table."""
+        
         selected = tree.selection()
         if selected:
             selected_id = tree.item(selected[0])["values"][0]
@@ -103,9 +100,9 @@ def view_appointments():
             edit_button.config(state="disabled")
             delete_button.config(state="disabled")
     
+    
     edit_button = tk.Button(button_frame, text="ویرایش",bg="purple",fg="white",state="disabled", command=lambda : edit_appointment_form(int(selected_appointment_id.get())))
     edit_button.pack(side="right", padx=10)
-
 
     delete_button = tk.Button(button_frame, text="حذف",bg="orange",fg="white",state="disabled", command=lambda : delete_appointments(int(selected_appointment_id.get())))
     delete_button.pack(side="right", padx=10)
@@ -113,14 +110,14 @@ def view_appointments():
     status_label = tk.Label(root, text="",bg="lightblue" ,fg="red", font=("Arial", 10))
     status_label.place(x=250,y=350)
     
+    
     def display_results(results):
+        """Show filtered or full appointment list in the treeview."""
         
         tree.delete(*tree.get_children())
-        
 
         if not results:
             status_label.config(text="هیچ نوبتی یافت نشد")
-
         else:
             status_label.config(text="")
             for a in results:
@@ -128,12 +125,11 @@ def view_appointments():
                 tree.insert("", tk.END, values=(a["id"],a["time"],a["date"],name))
 
 
-   
     display_results(appointments)
     
     tree.bind("<<TreeviewSelect>>", on_row_selected)
    
-    # Back button to close the window
+    # Button to close the appointment viewer window.
     tk.Button(root, text="بازگشت", command= root.destroy,bg="red",fg="white").place(x=220,y=400)
    
     root.mainloop()
