@@ -4,8 +4,10 @@ from logic.auth import check_login
 from admin_panel import open_admin_panel
 import datetime
 
+
 def create_login_window():
     """Create a simple login window using Tkinter."""
+    
     
     def attempt_login():
         """Check user credentials and handle login result."""
@@ -18,7 +20,6 @@ def create_login_window():
                 f.write(str(datetime.datetime.today()) + " | " + username+"\n")  # Record successful login to log.txt.
             root.destroy()  # Close window
             open_admin_panel() # Go to admin panel
-
         else:
             messagebox.showerror("خطا", "نام کاربری یا رمز عبور اشتباه است")
 

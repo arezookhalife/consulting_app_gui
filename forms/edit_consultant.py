@@ -1,51 +1,37 @@
 import tkinter as tk
 from tkinter import messagebox
 from datetime import datetime
-import json
+from logic.utils import load_file, save_file
 
+# File path for consultants data
 CONSULTANTS_FILE= "data/consultants.json"
 
-def load_file(file):
-    """This function import/create list."""
-
-    try:
-        with open(file, "r", encoding= "utf-8") as g:
-            return json.load(g)
-    except FileNotFoundError:
-        return [] 
-
-def save_file(list,file):
-    with open(file, "w", encoding= "utf-8") as g:
-        json.dump(list,g,ensure_ascii=False,indent=2)
-        
 
 def edit_consultant_form(id):
-    """Create a form window to edit selected consultant with input validation."""
+    """Create a form window to edit the selected consultant with input validation."""
 
     consultants = load_file(CONSULTANTS_FILE)
-    # If the file doesn't exist, create it with the consultant as the first entry.
+    
     if not consultants:
         messagebox.showerror("خطا", "مشاوری برای ویرایش وجود ندارد.")
-            
-    # If a file exists, read current data, edit consultant, and overwrite the file.   
     else:
-        # Find matched consultant.
+        # Find the consultant with the matching ID.
         consultant =  next((a for a in consultants if a["id"] == id), None)
         result= messagebox.askokcancel("اخطار","آیا از ویرایش مشاور انتخابی اطمینان دارید؟")
         
         if result:
-            # Create a new top-level window.
+            # Create the edit form window.
             window = tk.Toplevel()
             window.title("ویرایش مشاور ")
             window.geometry("400x400")
             window.config(bg="lightblue")
 
-            # Field a labels &  # list of entry widgets.
+            # Labels and corresponding values to populate fields.
             labels = ["نام مشاور", "تخصص", "شماره تماس", "ایمیل"]
             entries = [consultant["name"],consultant["specialty"],consultant["phone"],consultant["email"]]
             new_entries =[]
             
-            # Create label and entry for each field.
+            # Create labels and prefilled entry fields.
             y=10
             for label_text in labels:
                 y=y+40
@@ -54,30 +40,30 @@ def edit_consultant_form(id):
                 entry.place(x=100,y=y)
                 entry.insert(0, entries[labels.index(label_text)])  
                 new_entries.append(entry)
+              
                 
             def submit():
                 """Validate input fields and save consultant if all data is valid."""
                 
                 name, specialty, phone, email = [e.get().strip() for e in new_entries]
                 time= str(datetime.today())
-                
-                
-                # Ensure all fields are filled.                
+                 
+                # Validate non-empty fields.                
                 if not all([name, specialty, phone, email]):
                     messagebox.showerror("خطا", "لطفاً تمام فیلدها را پر کنید")
                     return 
                 
-                # Validate phone number (digits only).
+                # Validate phone number (must be all digits).
                 if not phone.isdigit():
                     messagebox.showerror("خطا", "شماره تماس معتبر وارد کنید")
                     return 
 
-                # Simple email format validation.
+                # Basic email format check.
                 if "@" not in email or "." not in email:
                     messagebox.showerror("خطا", "ایمیل معتبر وارد کنید")
                     return 
 
-                # edit consultant data.
+                # Update consultant data.
                 new_consultant={
                     "id":consultant['id'],
                     "name": name,
@@ -87,38 +73,32 @@ def edit_consultant_form(id):
                     "time_submit": time,
                     "appointments_count":consultant['appointments_count']
                 }
+                
                 consultants.remove(consultant)
                 consultants.insert((id-1),new_consultant)
                 save_file(consultants,CONSULTANTS_FILE)
                 messagebox.showinfo("موفق", "مشاور با موفقیت ویرایش شد")
                 window.destroy()
 
-            # Edit button to trigger validation and saving.
+            # Buttons for submit and cancel.
             tk.Button(window, text="ویرایش مشاور", command=submit, bg="green", fg="white").place(x=200,y=220)
-
-            # Cancel button to abort validation and data saving.
             tk.Button(window, text="لغو", command=window.destroy, bg="red", fg="white").place(x=150,y=220)
             
 
 def delete_consultants(id):
-    """This function delete selected consultant."""
+    """Delete the consultant with the given ID after user confirmation."""
 
     consultants = load_file(CONSULTANTS_FILE)
     
-    # If the file doesn't exist, create it with the consultant as the first entry.
     if not consultants:
         messagebox.showerror("خطا", "مشاوری برای حذف وجود ندارد.")
-            
-    # If a file exists, read current data.   
     else:
-        # Find matched consultant.
         consultant =  next((a for a in consultants if a["id"] == id), None)
         result= messagebox.askokcancel("اخطار","آیا از حذف مشاور انتخابی اطمینان دارید؟")
+        
         if result:
-            # Delete matched consultant.
             consultants.remove(consultant)                
-            with open(CONSULTANTS_FILE, "w", encoding= "utf-8") as g:
-                json.dump(consultants,g,ensure_ascii=False,indent=2)
+            save_file(consultants,CONSULTANTS_FILE)
             messagebox.showinfo("موفق", "مشاور با موفقیت حذف شد")
 
 

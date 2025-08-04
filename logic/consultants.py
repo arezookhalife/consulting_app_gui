@@ -1,65 +1,16 @@
-import json
-import os
+from logic.utils import load_file
 
-file_path = "data/consultants.json"
-
-def save_consultant(name, specialty, phone, email, time):
-    """Save a consultant's info to a JSON file."""
-      
-    # Create a dictionary for the consultant.
-    consultant = {
-        "id":"",
-        "name": name,
-        "specialty": specialty,
-        "phone": phone,
-        "email": email,
-        "time_submit": time,
-        "appointments_count":0
-    }
-
-    # If the file doesn't exist, create it with the consultant as the first entry.
-    if not os.path.exists(file_path):
-        with open(file_path, "w") as f:
-            json.dump([consultant], f, indent=4)
-            
-    # If a file exists, read current data, add new consultant, and overwrite the file.   
-    else:
-        with open(file_path, "r+") as f:
-            data = json.load(f)
-            new_id= data[-1]["id"]+ 1 if data else 1
-            consultant["id"]=new_id
-            data.append(consultant)
-            f.seek(0)
-            json.dump(data, f, indent=4)
-
-
-def consultants_count():
-    """Returns the number of consultants in the JSON file."""
-    
-    if not os.path.exists(file_path):
-        count=0
-               
-    else:
-        with open(file_path, "r+") as f:
-            data = json.load(f)
-            count= len(data)
-    return count
-
+# File path for consultants data
+CONSULTANTS_FILE= "data/consultants.json"
+       
 
 def search_consultant_by_name(name):
     """This function searches consultant by name."""
 
-    # If the file doesn't exist, create it with the consultant as the first entry.
-    if not os.path.exists(file_path):
-        return
+    consultants=load_file(CONSULTANTS_FILE)
             
-    # If a file exists, read current data, add new consultant, and overwrite the file.   
-    else:
-        with open(file_path, "r") as f:
-            list = json.load(f)
-            
-        # Find matched names.
-        matched_names = [c["name"] for c in list if name.lower() in c["name"].lower()]
-        consultants = [a for a in list if a["name"] in matched_names]
-        return consultants      
+    # Find matched names.
+    matched_names = [c["name"] for c in consultants if name.lower() in c["name"].lower()]
+    consultants = [a for a in consultants if a["name"] in matched_names]
+    return consultants      
             
