@@ -9,7 +9,7 @@ APPOINTMENTS_FILE= "data/appointments.json"
 CONSULTANTS_FILE= "data/consultants.json"
 
  
-def view_appointments():
+def view_appointments(role):
     """Open a window to display and manage a list of appointments."""
    
     # Load consultants and appointments data from JSON files.
@@ -78,11 +78,12 @@ def view_appointments():
 
     tree.column("id", width=0, stretch=False)
     tree.pack(expand=True, fill="both")   
-    tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)    
-
-    button_frame = tk.Frame(root,bg="lightblue")
-    button_frame.place(x=270,y=400)
-    selected_appointment_id = tk.StringVar(root)
+    tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set) 
+       
+    if role=="admin":
+        button_frame = tk.Frame(root,bg="lightblue")
+        button_frame.place(x=270,y=400)
+        selected_appointment_id = tk.StringVar(root)
     
     
     def on_row_selected(event):
@@ -100,13 +101,27 @@ def view_appointments():
             edit_button.config(state="disabled")
             delete_button.config(state="disabled")
     
-    
-    edit_button = tk.Button(button_frame, text="ویرایش",bg="purple",fg="white",state="disabled", command=lambda : edit_appointment_form(int(selected_appointment_id.get())))
-    edit_button.pack(side="right", padx=10)
+    if role=="admin":
+        edit_button = tk.Button(
+            button_frame,
+            text="ویرایش",
+            bg="purple",
+            fg="white",
+            state="disabled",
+            command=lambda : edit_appointment_form(int(selected_appointment_id.get()))
+            )
+        edit_button.pack(side="right", padx=10)
 
-    delete_button = tk.Button(button_frame, text="حذف",bg="orange",fg="white",state="disabled", command=lambda : delete_appointments(int(selected_appointment_id.get())))
-    delete_button.pack(side="right", padx=10)
-    
+        delete_button = tk.Button(
+            button_frame,
+            text="حذف",
+            bg="orange",
+            fg="white",
+            state="disabled",
+            command=lambda : delete_appointments(int(selected_appointment_id.get()))
+            )
+        delete_button.pack(side="right", padx=10)
+        
     status_label = tk.Label(root, text="",bg="lightblue" ,fg="red", font=("Arial", 10))
     status_label.place(x=250,y=350)
     
@@ -127,7 +142,8 @@ def view_appointments():
 
     display_results(appointments)
     
-    tree.bind("<<TreeviewSelect>>", on_row_selected)
+    if role=="admin":
+        tree.bind("<<TreeviewSelect>>", on_row_selected)
    
     # Button to close the appointment viewer window.
     tk.Button(root, text="بازگشت", command= root.destroy,bg="red",fg="white").place(x=220,y=400)

@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from logic.auth import check_login
-from admin_panel import open_admin_panel
+from panels import open_admin_panel, open_user_panel
 import datetime
 
 
@@ -15,11 +15,15 @@ def create_login_window():
         # Get entered username and password.
         username = entry_username.get()
         password = entry_password.get()
-        if check_login(username, password):
+        user= check_login(username, password)
+        if user:
             with open("log.txt", "a") as f:
                 f.write(str(datetime.datetime.today()) + " | " + username+"\n")  # Record successful login to log.txt.
             root.destroy()  # Close window
-            open_admin_panel() # Go to admin panel
+            if user["role"]=="admin":
+                open_admin_panel() # Go to admin panel
+            elif user["role"]=="user":
+                open_user_panel() # Go to user panel
         else:
             messagebox.showerror("خطا", "نام کاربری یا رمز عبور اشتباه است")
 
