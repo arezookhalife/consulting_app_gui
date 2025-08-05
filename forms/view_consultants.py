@@ -9,7 +9,7 @@ from logic.utils import load_file
 CONSULTANTS_FILE= "data/consultants.json"
 
 
-def view_consultants():
+def view_consultants(role):
     """Open a window to display a list of consultants from JSON file and allow searching by name."""
     
     appointments_count()
@@ -71,12 +71,13 @@ def view_consultants():
     tree.pack(expand=True, fill="both")   
     tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)    
 
-    button_frame = tk.Frame(root,bg="lightblue")
-    button_frame.place(x=270,y=400)
-    
-    # Store the selected consultant's ID for edit or delete operations.
-    selected_consultant_id = tk.StringVar(root)
-    
+    if role=="admin":
+        button_frame = tk.Frame(root,bg="lightblue")
+        button_frame.place(x=270,y=400)
+        
+        # Store the selected consultant's ID for edit or delete operations.
+        selected_consultant_id = tk.StringVar(root)
+        
 
     def on_row_selected(event):
         """Enable or disable edit and delete buttons based on row selection."""
@@ -93,27 +94,28 @@ def view_consultants():
             edit_button.config(state="disabled")
             delete_button.config(state="disabled")   
     
-    # Edit button to modify the selected consultant
-    edit_button = tk.Button(
-        button_frame,
-        text="ویرایش",
-        bg="purple",
-        fg="white",
-        state="disabled",
-        command=lambda : edit_consultant_form(int(selected_consultant_id.get()))
-        )
-    edit_button.pack(side="right", padx=10)
+    if role=="admin":
+        # Edit button to modify the selected consultant
+        edit_button = tk.Button(
+            button_frame,
+            text="ویرایش",
+            bg="purple",
+            fg="white",
+            state="disabled",
+            command=lambda : edit_consultant_form(int(selected_consultant_id.get()))
+            )
+        edit_button.pack(side="right", padx=10)
 
-    # Delete button to remove the selected consultant
-    delete_button = tk.Button(
-        button_frame,
-        text="حذف",
-        bg="orange",
-        fg="white",
-        state="disabled",
-        command=lambda : delete_consultants(int(selected_consultant_id.get()))
-        )
-    delete_button.pack(side="right", padx=10)
+        # Delete button to remove the selected consultant
+        delete_button = tk.Button(
+            button_frame,
+            text="حذف",
+            bg="orange",
+            fg="white",
+            state="disabled",
+            command=lambda : delete_consultants(int(selected_consultant_id.get()))
+            )
+        delete_button.pack(side="right", padx=10)
     
     status_label = tk.Label(root, text="",bg="lightblue" ,fg="red", font=("Arial", 10))
     status_label.place(x=250,y=350)
@@ -134,8 +136,9 @@ def view_consultants():
     
     display_results(consultants)
     
-    # Bind row selection event to update button states.    
-    tree.bind("<<TreeviewSelect>>", on_row_selected)
+    if role=="admin":
+        # Bind row selection event to update button states.    
+        tree.bind("<<TreeviewSelect>>", on_row_selected)
       
     # Back button to close the window.
     tk.Button(root, text="بازگشت", command= root.destroy,bg="red",fg="white").place(x=220,y=400)
