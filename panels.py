@@ -30,7 +30,7 @@ def open_user_panel():
     admin.title("پنل کاربر")
     admin.geometry("400x300")
     admin.config(bg="lightblue")
-    tk.Label(admin, text="به پنل کاربری خود خوش آمدید", font=("Arial", 12, "bold"),bg="lightblue").pack(pady=20)
+    tk.Label(admin, text="به پنل کاربری خوش آمدید", font=("Arial", 12, "bold"),bg="lightblue").pack(pady=20)
 
     tk.Button(admin, text="مشاهده لیست مشاوران", width=20, command=lambda :view_consultants("user"),bg="blue",fg="white").pack(pady=8)
     tk.Button(admin, text=" مشاهده نوبت ها", width=20, command=lambda :view_appointments("user"),bg="blue",fg="white").pack(pady=8)
