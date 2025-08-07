@@ -46,6 +46,7 @@ def add_appointment():
                 appointments.append(new_appointment)
                 save_file(appointments,APPOINTMENTS_FILE)
                 messagebox.showinfo("موفقیت", "نوبت با موفقیت ثبت شد!")
+                window.destroy()
             elif valid_datetime=="false":
                 messagebox.showerror("خطا", "امکان ثبت نوبت در تاریخ یا ساعت وارد شده وجود ندارد!")
             elif valid_datetime=="error":
@@ -54,34 +55,38 @@ def add_appointment():
         
                 
     # Create new top-level window for appointment form.            
-    root = tk.Toplevel()
-    root.title("ثبت نوبت")
-    root.geometry("400x300")
-    root.config(bg="lightblue")
+    window = tk.Toplevel()
+    window.title("ثبت نوبت")
+    window.geometry("400x300")
+    window.config(bg="lightblue")
+    
+    window_frame= tk.Frame(window)
+    window_frame.config(width=400,height=300,bg="lightblue")
+    window_frame.pack() 
     
     # Consultant dropdown.
-    tk.Label(root, text="انتخاب مشاور", bg="lightblue").place(x=250,y=50)
+    tk.Label(window_frame, text="انتخاب مشاور", bg="lightblue").place(x=250,y=50)
 
     consultants = load_file(CONSULTANTS_FILE)
 
     consultant_names = [c['name'] for c in consultants]
     consultant_name_to_id = {c['name']: c['id'] for c in consultants}
-    consultant_var = tk.StringVar(root)
+    consultant_var = tk.StringVar(window_frame)
 
-    ttk.Combobox(root, values=consultant_names, textvariable=consultant_var, state="readonly").place(x=100,y=50)
+    ttk.Combobox(window_frame, values=consultant_names, textvariable=consultant_var, state="readonly").place(x=100,y=50)
     
     # Date input.
-    tk.Label(root, text="تاریخ نوبت", bg="lightblue").place(x=250,y=90)
-    entry_date = tk.Entry(root)
+    tk.Label(window_frame, text="تاریخ نوبت", bg="lightblue").place(x=250,y=90)
+    entry_date = tk.Entry(window_frame)
     entry_date.place(x=100,y=90)
 
     # Time input.
-    tk.Label(root, text="ساعت نوبت", bg="lightblue").place(x=250,y=130)
-    entry_time = tk.Entry(root)
+    tk.Label(window_frame, text="ساعت نوبت", bg="lightblue").place(x=250,y=130)
+    entry_time = tk.Entry(window_frame)
     entry_time.place(x=100,y=130)
 
     # Buttons for saving and canceling.
-    tk.Button(root, text="ذخیره نوبت", command=save_appointment, bg="green", fg="white").place(x=200,y=170)
-    tk.Button(root, text="بازگشت", command=root.destroy, bg="red", fg="white").place(x=150,y=170)
+    tk.Button(window_frame, text="ذخیره نوبت", command=save_appointment, bg="green", fg="white").place(x=200,y=170)
+    tk.Button(window_frame, text="بازگشت", command=window.destroy, bg="red", fg="white").place(x=150,y=170)
 
-    root.mainloop()
+    window.mainloop()

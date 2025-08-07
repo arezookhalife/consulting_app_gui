@@ -13,25 +13,28 @@ def view_appointments(role):
     """Open a window to display and manage a list of appointments."""
    
     # Load consultants and appointments data from JSON files.
-    appointments = load_file(APPOINTMENTS_FILE)
     consultants = load_file(CONSULTANTS_FILE)
        
     # Create main window.
     root = tk.Tk()
     root.title("مشاهده نوبت ها")
-    root.geometry("600x450")
+    root.geometry("600x470")
     root.resizable(True, True)
     root.config(bg="lightblue")  
      
     tk.Label(root, text="لیست نوبت‌ها",  font=("Arial", 12,"bold"),bg="lightblue").pack(pady=20)
-    tk.Label(root, text="جستجوی نوبت ",bg="lightblue").place(x=450,y=70)
-    tk.Label(root, text="نام مشاور",bg="lightblue").place(x=370,y=60)
-    consultant_entry = tk.Entry(root)
-    consultant_entry.place(x=240,y=60)
+    
+    search_frame = tk.Frame(root)
+    search_frame.config(width=350,height=50,bg="lightblue")
+    search_frame.pack()
+    tk.Label(search_frame, text="جستجوی نوبت ",bg="lightblue").place(x=270,y=20)
+    tk.Label(search_frame, text="نام مشاور",bg="lightblue").place(x=200,y=10)
+    consultant_entry = tk.Entry(search_frame)
+    consultant_entry.place(x=70,y=10)
    
-    tk.Label(root, text="تاریخ نوبت",bg="lightblue").place(x=370,y=80)
-    date_entry = tk.Entry(root)
-    date_entry.place(x=240,y=80)
+    tk.Label(search_frame, text="تاریخ نوبت",bg="lightblue").place(x=200,y=30)
+    date_entry = tk.Entry(search_frame)
+    date_entry.place(x=70,y=30)
     
     consultant_map={c['id']:c['name'] for c in consultants}
 
@@ -39,6 +42,7 @@ def view_appointments(role):
     def on_search():  
         """Filter appointments based on consultant name or date."""
         
+        appointments = load_file(APPOINTMENTS_FILE)
         consultant_input = consultant_entry.get().strip()
         date_input = date_entry.get().strip()
         if consultant_input:
@@ -50,10 +54,13 @@ def view_appointments(role):
         display_results(results)
        
         
-    tk.Button(root, text="جستجو", command=on_search,bg="blue", fg="white").place(x=170,y=70)
-    
+    tk.Button(search_frame, text="جستجو", command=on_search,bg="blue", fg="white").place(y=20)
+
+    status_label = tk.Label(root, text="",bg="lightblue" ,fg="red", font=("Arial", 10))
+    status_label.pack()
+        
     result_frame = tk.Frame(root)
-    result_frame.pack(pady=40)
+    result_frame.pack(pady=10)
     
     style = ttk.Style()
     style.theme_use("clam")
@@ -82,7 +89,7 @@ def view_appointments(role):
        
     if role=="admin":
         button_frame = tk.Frame(root,bg="lightblue")
-        button_frame.place(x=270,y=400)
+        button_frame.pack()
         selected_appointment_id = tk.StringVar(root)
     
     
@@ -101,30 +108,6 @@ def view_appointments(role):
             edit_button.config(state="disabled")
             delete_button.config(state="disabled")
     
-    if role=="admin":
-        edit_button = tk.Button(
-            button_frame,
-            text="ویرایش",
-            bg="purple",
-            fg="white",
-            state="disabled",
-            command=lambda : edit_appointment_form(int(selected_appointment_id.get()))
-            )
-        edit_button.pack(side="right", padx=10)
-
-        delete_button = tk.Button(
-            button_frame,
-            text="حذف",
-            bg="orange",
-            fg="white",
-            state="disabled",
-            command=lambda : delete_appointments(int(selected_appointment_id.get()))
-            )
-        delete_button.pack(side="right", padx=10)
-        
-    status_label = tk.Label(root, text="",bg="lightblue" ,fg="red", font=("Arial", 10))
-    status_label.place(x=250,y=350)
-    
     
     def display_results(results):
         """Show filtered or full appointment list in the treeview."""
@@ -140,13 +123,48 @@ def view_appointments(role):
                 tree.insert("", tk.END, values=(a["id"],a["time"],a["date"],name))
 
 
+    def show_edit(id):
+        edit_appointment_form(id,root)
+        appointments = load_file(APPOINTMENTS_FILE)
+        display_results(appointments)
+    
+    
+    def show_delete(id):
+        delete_appointments(id)
+        appointments = load_file(APPOINTMENTS_FILE)
+        display_results(appointments)
+     
+        
+    if role=="admin":
+        edit_button = tk.Button(
+            button_frame,
+            text="ویرایش",
+            bg="purple",
+            fg="white",
+            state="disabled",
+            command=lambda : show_edit(int(selected_appointment_id.get()))
+            )
+        edit_button.pack(side="right", padx=10)
+
+        delete_button = tk.Button(
+            button_frame,
+            text="حذف",
+            bg="orange",
+            fg="white",
+            state="disabled",
+            command=lambda : show_delete(int(selected_appointment_id.get()))
+            )
+        delete_button.pack(side="right", padx=10)
+       
+       
+    appointments = load_file(APPOINTMENTS_FILE)
     display_results(appointments)
     
     if role=="admin":
         tree.bind("<<TreeviewSelect>>", on_row_selected)
    
     # Button to close the appointment viewer window.
-    tk.Button(root, text="بازگشت", command= root.destroy,bg="red",fg="white").place(x=220,y=400)
+    tk.Button(root, text="بازگشت", command= root.destroy,bg="red",fg="white").pack(pady=5)
    
     root.mainloop()
 
