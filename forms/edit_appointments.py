@@ -8,7 +8,7 @@ APPOINTMENTS_FILE= "data/appointments.json"
 CONSULTANTS_FILE= "data/consultants.json"
        
 
-def edit_appointment_form(id):
+def edit_appointment_form(id,root):
     """Create a form window to edit the selected appointment with validation."""
 
     appointments = load_file(APPOINTMENTS_FILE)
@@ -16,7 +16,7 @@ def edit_appointment_form(id):
     
     # Show error if there are no appointments to edit.
     if not appointments:
-        messagebox.showerror("خطا", "نوبتی برای ویرایش وجود ندارد.")
+        messagebox.showerror("خطا", "!نوبتی برای ویرایش وجود ندارد.")
     else:
         # Find the appointment with the matching ID.
         appointment =  next((a for a in appointments if a["id"] == id), None)
@@ -24,31 +24,35 @@ def edit_appointment_form(id):
         
         if result:
             # Create form window.
-            window = tk.Toplevel()
+            window = tk.Toplevel(root)
             window.title("ویرایش نوبت")
             window.geometry("400x400")
             window.config(bg="lightblue")
             
+            window_frame = tk.Frame(window)
+            window_frame.config(width=400,height=400,bg="lightblue")
+            window_frame.pack() 
+    
             consultant_names = [c['name'] for c in consultants]
             consultant_id_to_name = {c['id']: c['name'] for c in consultants}
             consultant_name_to_id = {c['name']: c['id'] for c in consultants}
 
             # Consultant selection.
-            tk.Label(window, text="نام مشاور:", bg="lightblue").place(x=250,y=50)
-            consultant_var = tk.StringVar()
-            consultant_dropdown = ttk.Combobox(window, textvariable=consultant_var, values=consultant_names, state="readonly")
+            tk.Label(window_frame, text="نام مشاور", bg="lightblue").place(x=250,y=50)
+            consultant_var = tk.StringVar(window_frame)
+            consultant_dropdown = ttk.Combobox(window_frame, textvariable=consultant_var, values=consultant_names, state="readonly")
             consultant_dropdown.set(consultant_id_to_name.get(appointment["consultant_id"], ""))
             consultant_dropdown.place(x=100,y=50)
             
             # Date entry.
-            tk.Label(window, text="تاریخ نوبت:", bg="lightblue").place(x=250,y=90)
-            entry_date = tk.Entry(window)
+            tk.Label(window_frame, text="تاریخ نوبت", bg="lightblue").place(x=250,y=90)
+            entry_date = tk.Entry(window_frame)
             entry_date.insert(0, appointment["date"])
             entry_date.place(x=100,y=90)
 
             # Time entry.
-            tk.Label(window, text="ساعت نوبت:", bg="lightblue").place(x=250,y=130)
-            entry_time = tk.Entry(window)
+            tk.Label(window_frame, text="ساعت نوبت", bg="lightblue").place(x=250,y=130)
+            entry_time = tk.Entry(window_frame)
             entry_time.insert(0, appointment["time"])
             entry_time.place(x=100,y=130)
             
@@ -62,9 +66,9 @@ def edit_appointment_form(id):
                 consultant_id = consultant_name_to_id.get(name)
 
                 if consultant_id is None:
-                    messagebox.showerror("خطا", "نوبت انتخاب‌شده معتبر نیست.")
+                    messagebox.showerror("خطا", "!نوبت انتخاب‌شده معتبر نیست")
                 elif not all([name, date_input, time_input]):
-                    messagebox.showerror("خطا", "لطفاً تمام فیلدها را پر کنید")
+                    messagebox.showerror("خطا", "!لطفاً تمام فیلدها را پر کنید")
                     return 
                 else:
                     # Validate date and time.
@@ -82,18 +86,18 @@ def edit_appointment_form(id):
                         appointments.remove(appointment)
                         appointments.insert((id-1),new_appointment)
                         save_file(appointments,APPOINTMENTS_FILE)
-                        messagebox.showinfo("موفق", "نوبت با موفقیت ویرایش شد")
+                        messagebox.showinfo("موفق", ".نوبت با موفقیت ویرایش شد")
                         window.destroy()
                     elif valid_datetime=="false":
-                        messagebox.showerror("خطا", "امکان ثبت نوبت در تاریخ یا ساعت وارد شده وجود ندارد!")
+                        messagebox.showerror("خطا", "!امکان ثبت نوبت در تاریخ یا ساعت وارد شده وجود ندارد")
                     elif valid_datetime=="error":
-                        messagebox.showerror("خطا", "فرمت تاریخ یا ساعت وارد شده صحیح نیست!")
+                        messagebox.showerror("خطا", "!فرمت تاریخ یا ساعت وارد شده صحیح نیست")
 
 
             # Buttons.
-            tk.Button(window, text="ویرایش نوبت", command=submit, bg="green", fg="white").place(x=200,y=170)
-            tk.Button(window, text="لغو", command=window.destroy, bg="red", fg="white").place(x=150,y=170)
-            
+            tk.Button(window_frame, text="ویرایش نوبت", command=submit, bg="green", fg="white").place(x=200,y=170)
+            tk.Button(window_frame, text="لغو", command=window.destroy, bg="red", fg="white").place(x=150,y=170)
+            root.wait_window(window)
 
 def delete_appointments(id):
     """Delete the appointment with the given ID after user confirmation."""

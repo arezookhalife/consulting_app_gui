@@ -34,19 +34,24 @@ def create_login_window():
     root.geometry("350x200")
     root.config(bg="lightblue")
 
+    login_frame= tk.Frame(root)
+    login_frame.config(width=350,height=200,bg="lightblue")
+    login_frame.pack()    
+
+    
     # Username label and entry
-    tk.Label(root, text=":نام کاربری", bg="lightblue").place(x=220,y=50)
-    entry_username = tk.Entry(root)
+    tk.Label(login_frame, text=":نام کاربری", bg="lightblue").place(x=220,y=50)
+    entry_username = tk.Entry(login_frame)
     entry_username.place(x=90,y=50)
 
     # Password label and entry (with masking)
-    tk.Label(root, text=":رمز عبور", bg="lightblue").place(x=220,y=90)
-    entry_password = tk.Entry(root, show="*")
+    tk.Label(login_frame, text=":رمز عبور", bg="lightblue").place(x=220,y=90)
+    entry_password = tk.Entry(login_frame, show="*")
     entry_password.place(x=90,y=90)
 
     # Login and exit button
-    tk.Button(root, text="ورود",bg='green', fg="white", command=attempt_login).place(x=180,y=135)
-    tk.Button(root, text="خروج",bg='red', fg="white", command=root.quit).place(x=140,y=135)
+    tk.Button(login_frame, text="ورود",bg='green', fg="white", command=attempt_login).place(x=180,y=135)
+    tk.Button(login_frame, text="خروج",bg='red', fg="white", command=root.quit).place(x=140,y=135)
 
     # Start the GUI event loop
     root.mainloop()

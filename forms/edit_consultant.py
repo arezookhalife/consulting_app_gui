@@ -7,7 +7,7 @@ from logic.utils import load_file, save_file
 CONSULTANTS_FILE= "data/consultants.json"
 
 
-def edit_consultant_form(id):
+def edit_consultant_form(id,root):
     """Create a form window to edit the selected consultant with input validation."""
 
     consultants = load_file(CONSULTANTS_FILE)
@@ -21,11 +21,15 @@ def edit_consultant_form(id):
         
         if result:
             # Create the edit form window.
-            window = tk.Toplevel()
+            window = tk.Toplevel(root)
             window.title("ویرایش مشاور ")
             window.geometry("400x400")
             window.config(bg="lightblue")
 
+            window_frame= tk.Frame(window)
+            window_frame.config(width=400,height=400,bg="lightblue")
+            window_frame.pack() 
+    
             # Labels and corresponding values to populate fields.
             labels = ["نام مشاور", "تخصص", "شماره تماس", "ایمیل"]
             entries = [consultant["name"],consultant["specialty"],consultant["phone"],consultant["email"]]
@@ -35,8 +39,8 @@ def edit_consultant_form(id):
             y=10
             for label_text in labels:
                 y=y+40
-                tk.Label(window, text=label_text,bg="lightblue").place(x=250,y=y)
-                entry = tk.Entry(window)
+                tk.Label(window_frame, text=label_text,bg="lightblue").place(x=250,y=y)
+                entry = tk.Entry(window_frame)
                 entry.place(x=100,y=y)
                 entry.insert(0, entries[labels.index(label_text)])  
                 new_entries.append(entry)
@@ -81,9 +85,9 @@ def edit_consultant_form(id):
                 window.destroy()
 
             # Buttons for submit and cancel.
-            tk.Button(window, text="ویرایش مشاور", command=submit, bg="green", fg="white").place(x=200,y=220)
-            tk.Button(window, text="لغو", command=window.destroy, bg="red", fg="white").place(x=150,y=220)
-            
+            tk.Button(window_frame, text="ویرایش مشاور", command=submit, bg="green", fg="white").place(x=200,y=220)
+            tk.Button(window_frame, text="لغو", command=window.destroy, bg="red", fg="white").place(x=150,y=220)
+            root.wait_window(window)
 
 def delete_consultants(id):
     """Delete the consultant with the given ID after user confirmation."""
